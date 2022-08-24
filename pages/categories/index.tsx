@@ -9,6 +9,16 @@ export const getServerSideProps = async ({ req }) => {
     return { props: { categories } }
 }
 
+function create() {
+    console.log("POST REQUEST TO /api/category")
+
+    const newCategory = { name: "coco" }
+
+    fetch("/api/category", {
+        method: "POST",
+        body: newCategory,
+    })
+}
 const Categories: NextPage = ({ categories }) => {
     return (
         <div>
@@ -18,7 +28,10 @@ const Categories: NextPage = ({ categories }) => {
             </Head>
 
             <main>
-                <h1>Categories</h1>
+                <h1>Categories CRUD</h1>
+
+                <button onClick={create}>Create</button>
+
                 <ul>
                     {categories.map(category => (
                         <li key={category.id}>{category.name}</li>
