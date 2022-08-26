@@ -31,17 +31,17 @@ const Categories: NextPage<Props> = ({ categories }) => {
     }
 
     const deleteItem = async (event: { currentTarget: { id: string } }) => {
-        fetch("/api/category", {
+        const res = await fetch("/api/category", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({ id: event.currentTarget.id }),
-        }).then(res => {
-            res.json().then(json => {
-                setCats(cats.filter(cat => cat.id !== json.id))
-            })
         })
+
+        const json = await res.json()
+
+        setCats(cats.filter(cat => cat.id !== json.id))
     }
 
     return (
