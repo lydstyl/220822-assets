@@ -20,7 +20,6 @@ export default async function handler(
             },
         })
 
-        console.log(createdCategory)
         res.status(200).json(createdCategory)
     }
 
@@ -31,7 +30,6 @@ export default async function handler(
             },
         })
 
-        console.log(deletedCategory)
         res.status(200).json(deletedCategory)
     }
 }

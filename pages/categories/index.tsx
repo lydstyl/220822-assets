@@ -18,16 +18,18 @@ const Categories: NextPage<Props> = ({ categories }) => {
     const [cats, setCats] = useState(categories)
     const [name, setName] = useState("")
 
-    const create: FormEventHandler<HTMLFormElement> = event => {
+    const create: FormEventHandler<HTMLFormElement> = async event => {
         event.preventDefault()
-
-        fetch("/api/category", {
+        const res = await fetch("/api/category", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({ name }),
         })
+        const json: Category = await res.json()
+        setName("")
+        setCats([...cats, json])
     }
 
     const deleteItem = async (event: { currentTarget: { id: string } }) => {
@@ -38,9 +40,7 @@ const Categories: NextPage<Props> = ({ categories }) => {
             },
             body: JSON.stringify({ id: event.currentTarget.id }),
         })
-
-        const json = await res.json()
-
+        const json: Category = await res.json()
         setCats(cats.filter(cat => cat.id !== json.id))
     }
 
