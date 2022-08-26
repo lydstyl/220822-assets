@@ -17,7 +17,22 @@ function create() {
 
     fetch("/api/category", {
         method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
         body: JSON.stringify(newCategory),
+    })
+}
+const deleteItem = (event: { currentTarget: { id: string } }) => {
+    const { id } = event.currentTarget
+    console.log("handleDelete", id)
+
+    fetch("/api/category", {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
     })
 }
 
@@ -26,10 +41,6 @@ interface Props {
 }
 
 const Categories: NextPage<Props> = ({ categories }) => {
-    const deleteItem = (event: { currentTarget: { id: string } }) => {
-        const { id } = event.currentTarget
-        console.log("handleDelete", id)
-    }
     return (
         <div>
             <Head>
