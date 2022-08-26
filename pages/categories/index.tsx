@@ -1,11 +1,12 @@
 import type { NextPage } from "next"
 import Head from "next/head"
-
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient, Category } from "@prisma/client"
+import { MouseEvent } from "react"
 const prisma = new PrismaClient()
 
-export const getServerSideProps = async ({ req }) => {
-    const categories = await prisma.category.findMany()
+export const getServerSideProps = async () => {
+    const categories: Category[] = await prisma.category.findMany()
+
     return { props: { categories } }
 }
 
@@ -16,10 +17,19 @@ function create() {
 
     fetch("/api/category", {
         method: "POST",
-        body: newCategory,
+        body: JSON.stringify(newCategory),
     })
 }
-const Categories: NextPage = ({ categories }) => {
+
+interface Props {
+    categories: Category[]
+}
+
+const Categories: NextPage<Props> = ({ categories }) => {
+    const deleteItem = (event: { currentTarget: { id: string } }) => {
+        const { id } = event.currentTarget
+        console.log("handleDelete", id)
+    }
     return (
         <div>
             <Head>
@@ -33,8 +43,13 @@ const Categories: NextPage = ({ categories }) => {
                 <button onClick={create}>Create</button>
 
                 <ul>
-                    {categories.map(category => (
-                        <li key={category.id}>{category.name}</li>
+                    {categories.map((category, index) => (
+                        <li key={category.id}>
+                            <button id={category.id} onClick={deleteItem}>
+                                X {index}
+                            </button>
+                            {category.name}
+                        </li>
                     ))}
                 </ul>
 
