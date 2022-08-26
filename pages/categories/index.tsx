@@ -1,7 +1,7 @@
 import type { NextPage } from "next"
 import Head from "next/head"
 import { PrismaClient, Category } from "@prisma/client"
-import { MouseEvent } from "react"
+import { FormEventHandler, useState } from "react"
 const prisma = new PrismaClient()
 
 export const getServerSideProps = async () => {
@@ -10,37 +10,35 @@ export const getServerSideProps = async () => {
     return { props: { categories } }
 }
 
-function create() {
-    console.log("POST REQUEST TO /api/category")
-
-    const newCategory = { name: "coco" }
-
-    fetch("/api/category", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newCategory),
-    })
-}
-const deleteItem = (event: { currentTarget: { id: string } }) => {
-    const { id } = event.currentTarget
-    console.log("handleDelete", id)
-
-    fetch("/api/category", {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id }),
-    })
-}
-
 interface Props {
     categories: Category[]
 }
 
 const Categories: NextPage<Props> = ({ categories }) => {
+    const [name, setName] = useState("")
+
+    const create: FormEventHandler<HTMLFormElement> = event => {
+        event.preventDefault()
+
+        fetch("/api/category", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name }),
+        })
+    }
+
+    const deleteItem = (event: { currentTarget: { id: string } }) => {
+        fetch("/api/category", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id: event.currentTarget.id }),
+        })
+    }
+
     return (
         <div>
             <Head>
@@ -51,7 +49,17 @@ const Categories: NextPage<Props> = ({ categories }) => {
             <main>
                 <h1>Categories CRUD</h1>
 
-                <button onClick={create}>Create</button>
+                <form onSubmit={create}>
+                    <label>
+                        name:
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                        />
+                        <input type="submit" />
+                    </label>
+                </form>
 
                 <ul>
                     {categories.map((category, index) => (
@@ -63,8 +71,6 @@ const Categories: NextPage<Props> = ({ categories }) => {
                         </li>
                     ))}
                 </ul>
-
-                <pre>{JSON.stringify(categories)}</pre>
             </main>
         </div>
     )

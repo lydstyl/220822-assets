@@ -16,12 +16,11 @@ export default async function handler(
     if (req.method === "POST") {
         const createdCategory: Category = await prisma.category.create({
             data: {
-                name: "My new category coco",
+                name: req.body.name,
             },
         })
 
-        console.log(createdCategory.name)
-
+        console.log(createdCategory)
         res.status(200).json(createdCategory)
     }
 
@@ -33,7 +32,6 @@ export default async function handler(
         })
 
         console.log(deleteCategory)
-
         res.status(200).json(deleteCategory)
     }
 }
