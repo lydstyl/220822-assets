@@ -25,13 +25,13 @@ export default async function handler(
     }
 
     if (req.method === "DELETE") {
-        const deleteCategory = await prisma.category.delete({
+        const deletedCategory = await prisma.category.delete({
             where: {
                 id: req.body.id,
             },
         })
 
-        console.log(deleteCategory)
-        res.status(200).json(deleteCategory)
+        console.log(deletedCategory)
+        res.status(200).json(deletedCategory)
     }
 }

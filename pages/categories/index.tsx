@@ -15,6 +15,7 @@ interface Props {
 }
 
 const Categories: NextPage<Props> = ({ categories }) => {
+    const [cats, setCats] = useState(categories)
     const [name, setName] = useState("")
 
     const create: FormEventHandler<HTMLFormElement> = event => {
@@ -29,13 +30,17 @@ const Categories: NextPage<Props> = ({ categories }) => {
         })
     }
 
-    const deleteItem = (event: { currentTarget: { id: string } }) => {
+    const deleteItem = async (event: { currentTarget: { id: string } }) => {
         fetch("/api/category", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({ id: event.currentTarget.id }),
+        }).then(res => {
+            res.json().then(json => {
+                setCats(cats.filter(cat => cat.id !== json.id))
+            })
         })
     }
 
@@ -62,7 +67,7 @@ const Categories: NextPage<Props> = ({ categories }) => {
                 </form>
 
                 <ul>
-                    {categories.map((category, index) => (
+                    {cats.map((category, index) => (
                         <li key={category.id}>
                             <button id={category.id} onClick={deleteItem}>
                                 X {index}
