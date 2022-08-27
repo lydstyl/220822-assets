@@ -2,7 +2,7 @@ import type { NextPage } from "next"
 import Head from "next/head"
 import { PrismaClient, Category } from "@prisma/client"
 import { FormEventHandler, useState } from "react"
-import createService from "../../services/create"
+import { createService, deleteService } from "../../services"
 
 const prisma = new PrismaClient()
 
@@ -15,7 +15,6 @@ export const getServerSideProps = async () => {
 interface Props {
     categories: Category[]
 }
-
 const Categories: NextPage<Props> = ({ categories }) => {
     const [cats, setCats] = useState(categories)
     const [name, setName] = useState("")
@@ -26,7 +25,6 @@ const Categories: NextPage<Props> = ({ categories }) => {
         interface JSBody {
             name: string
         }
-
         const json = await createService<JSBody>("/api/category", { name })
 
         setName("")
@@ -34,14 +32,11 @@ const Categories: NextPage<Props> = ({ categories }) => {
     }
 
     const deleteItem = async (event: { currentTarget: { id: string } }) => {
-        const res = await fetch("/api/category", {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ id: event.currentTarget.id }),
-        })
-        const json: Category = await res.json()
+        const json = await deleteService(
+            "/api/category",
+            event.currentTarget.id
+        )
+
         setCats(cats.filter(cat => cat.id !== json.id))
     }
 
