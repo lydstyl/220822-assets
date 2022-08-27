@@ -3,6 +3,7 @@ import Head from "next/head"
 import { PrismaClient, Category } from "@prisma/client"
 import { FormEventHandler, useState } from "react"
 import { createService, deleteService } from "../../services"
+import ItemListWithDelete from "../../components/itemListWithDelete"
 
 const prisma = new PrismaClient()
 
@@ -72,6 +73,8 @@ const Categories: NextPage<Props> = ({ categories }) => {
                         </li>
                     ))}
                 </ul>
+
+                <ItemListWithDelete list={cats} setList={setCats} />
             </main>
         </div>
     )
