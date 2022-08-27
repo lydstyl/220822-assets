@@ -30,4 +30,5 @@ https://www.youtube.com/watch?v=FMnlyi60avU
 ### some Prisma commands I used
 
 npx prisma init
+npx prisma migrate dev --name account
 npx prisma studio
