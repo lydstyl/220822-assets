@@ -2,6 +2,8 @@ import type { NextPage } from "next"
 import Head from "next/head"
 import { PrismaClient, Category } from "@prisma/client"
 import { FormEventHandler, useState } from "react"
+import createService from "../../services/create"
+
 const prisma = new PrismaClient()
 
 export const getServerSideProps = async () => {
@@ -20,14 +22,13 @@ const Categories: NextPage<Props> = ({ categories }) => {
 
     const create: FormEventHandler<HTMLFormElement> = async event => {
         event.preventDefault()
-        const res = await fetch("/api/category", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ name }),
-        })
-        const json: Category = await res.json()
+
+        interface JSBody {
+            name: string
+        }
+
+        const json = await createService<JSBody>("/api/category", { name })
+
         setName("")
         setCats([...cats, json])
     }
