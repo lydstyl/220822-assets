@@ -2,7 +2,9 @@ import type { NextPage } from "next"
 import Head from "next/head"
 import { PrismaClient, Category } from "@prisma/client"
 import { FormEventHandler, useState } from "react"
-import { createService, deleteService } from "../../services"
+import { useQuery } from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+import { readService, createService } from "../../services"
 import ItemListWithDelete from "../../components/itemListWithDelete"
 
 const prisma = new PrismaClient()
@@ -17,6 +19,11 @@ interface Props {
     categories: Category[]
 }
 const Categories: NextPage<Props> = ({ categories }) => {
+    const { isLoading, error, data, isFetching } = useQuery(
+        ["categories"],
+        () => readService("/api/category")
+    )
+
     const [cats, setCats] = useState(categories)
     const [name, setName] = useState("")
 
@@ -32,14 +39,7 @@ const Categories: NextPage<Props> = ({ categories }) => {
         setCats([...cats, json])
     }
 
-    const deleteItem = async (event: { currentTarget: { id: string } }) => {
-        const json = await deleteService(
-            "/api/category",
-            event.currentTarget.id
-        )
-
-        setCats(cats.filter(cat => cat.id !== json.id))
-    }
+    if (error) return "An error has occurred: " + error.message
 
     return (
         <div>
@@ -63,18 +63,22 @@ const Categories: NextPage<Props> = ({ categories }) => {
                     </label>
                 </form>
 
+                <ItemListWithDelete list={cats} setList={setCats} />
+
+                <h2>react query useQuery</h2>
+                {isLoading && <p>Loading...</p>}
+
+                <div>{isFetching ? "Updating..." : ""}</div>
+                <ReactQueryDevtools initialIsOpen />
+
                 <ul>
-                    {cats.map((category, index) => (
-                        <li key={category.id}>
-                            <button id={category.id} onClick={deleteItem}>
-                                X {index}
-                            </button>
-                            {category.name}
+                    {data.map((item, index) => (
+                        <li key={item.id}>
+                            <button id={item.id}>X {index}</button>
+                            {item.name}
                         </li>
                     ))}
                 </ul>
-
-                <ItemListWithDelete list={cats} setList={setCats} />
             </main>
         </div>
     )

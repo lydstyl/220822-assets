@@ -1,12 +1,18 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+
 import "../styles/globals.css"
 import type { AppProps } from "next/app"
 import Layout from "../components/layout"
 
+const queryClient = new QueryClient()
+
 function MyApp({ Component, pageProps }: AppProps) {
     return (
-        <Layout>
-            <Component {...pageProps} />
-        </Layout>
+        <QueryClientProvider client={queryClient}>
+            <Layout>
+                <Component {...pageProps} />
+            </Layout>
+        </QueryClientProvider>
     )
 }
 

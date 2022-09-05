@@ -17,6 +17,11 @@ export default function makeApiHandler<ModelType>(options: ApiHandlerOptions) {
         console.log(`/api/${modelName} handler`, req.method, req.body)
         const model = prisma[modelName]
 
+        if (req.method === "GET") {
+            const readedRecords = await model.findMany()
+
+            res.status(200).json(readedRecords)
+        }
         if (req.method === "POST") {
             const data = {}
             modelDatas.forEach((modelData: string) => {
